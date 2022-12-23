@@ -14,7 +14,7 @@ class Name(Field):
 
 
 class Phone(Field):
-    def __init__(self, phone="") -> None:
+    def __init__(self, phone) -> None:
         Field.__init__(self)
         self.phone = phone
 
@@ -24,12 +24,15 @@ class Record():
         self.name = Name(name)
         self.phone = []
         for p in phone:
-            self.phone.append(p)
+            self.phone.append(Phone(p))
 
 
 class AddressBook(UserDict):
     def __init__(self) -> None:
         UserDict.__init__(self)
+
+    def __setitem__(self, key, value) -> None:
+        Record.__setitem__(key, value)
 
     def add_record(self, name, phone):
         self.data[name] = []
@@ -47,13 +50,13 @@ class AddressBook(UserDict):
 
     def search_phone(self, name):
         try:
-            print(self.data.get(name))
+            print(" ".join(self.data.get(name)))
         except:
             print("There is no user with this name!")
 
     def show_all(self):
         for k in self.data.keys():
-            print(k, ":", " ".join(self.data.get(k)))
+            print(k.title(), ":", " ".join(self.data.get(k)))
 
 
 class User():
@@ -90,7 +93,7 @@ while True:
     input_list = attribute_sring.split(" ")
     for i in input_list:
         if i.isalpha():
-            name = Name(i.title())
+            name = Name(i)
             input_list.remove(i)
             phone = Phone(input_list)
             break
