@@ -23,8 +23,13 @@ class Record():
     def __init__(self, name, phone) -> None:
         self.name = Name(name)
         self.phone = []
-        for p in phone:
-            self.phone.append(Phone(p))
+        if type(phone) == str:
+            self.phone.append(Phone(phone))
+        elif type(phone) == list:
+            for p in phone:
+                self.phone.append(Phone(p))
+        else:
+            self.phone.append(Phone(str(phone)))
 
     def add_phone(self, phone_new):
         self.phone.append(phone_new)
@@ -43,33 +48,35 @@ class AddressBook(UserDict):
     def __init__(self) -> None:
         UserDict.__init__(self)
 
-    def __setitem__(self, key, value) -> None:
-        Record.__setitem__(key, value)
+    def __setitem__(self, name, phone) -> None:
+        self.data[name] = Record(name, phone)
 
     def add_record(self, name, phone):
         try:
-            self.data[name] = []
-            self.data.change_phone(phone)
+            self.data[name] = Record(name, phone)
             print("Contact save fine!")
         except:
-            print("")
+            print("Error!")
 
     def change_record(self, name, phone):
         try:
-            self.data.change_phone(phone)
+            self.data[name].change_phone(phone)
             print("Contact save fine!")
         except:
             print("There is no user with this name!")
 
     def search_phone(self, name):
         try:
-            print(" ".join(self.data.get(name)))
+            print(" ".join(self.data.get(name).phone))
         except:
             print("There is no user with this name!")
 
     def show_all(self):
-        for k in self.data.keys():
-            print(k.title(), ":", " ".join(self.data.get(k)))
+        try:
+            for k in self.data.keys():
+                print(k.title(), ":", " ".join(self.data.get(name).phone))
+        except:
+            print("Error!")
 
 
 class User():
