@@ -1,164 +1,116 @@
 import sys
-
-CONTACTS = {
-    "name": "phones"
-}
-
-ANSWER = {
-    "1": "How can I help you?",
-    "2": "Contact save fine!",
-    "3": "Contact update fine!",
-    "4": "Enter user name!",
-    "5": "Give me name and phone please!",
-    "6": "Unknown error. Try entering the command again!",
-    "7": "There is no user with this name!",
-    "8": "You entered something wrong!"
-}
+from collections import UserDict
 
 
-def input_error_main(func):
-    """Декоратор для функції main"""
-
-    def inner(*args, **kwargs):
-        while True:
-            try:
-                s_result = func(*args, **kwargs)
-                return s_result
-            except Exception as e:
-                if e.__class__ == UnboundLocalError:
-                    if "name" in e.args[0]:
-                        print(ANSWER["4"])
-                    elif "phone" in e.args[0]:
-                        print(ANSWER["5"])
-                    else:
-                        print(ANSWER["6"])
-    return inner
+class Field():
+    def __init__(self) -> None:
+        pass
 
 
-def input_error(func):
-    """Декоратор для handler-функцій"""
-    def inner(*args, **kwargs):
+class Name(Field):
+    def __init__(self, name) -> None:
+        Field.__init__(self)
+        self.name = name
+
+
+class Phone(Field):
+    def __init__(self, phone="") -> None:
+        Field.__init__(self)
+        self.phone = phone
+
+
+class Record():
+    def __init__(self, name, phone) -> None:
+        self.name = Name(name)
+        self.phone = []
+        for p in phone:
+            self.phone.append(p)
+
+
+class AddressBook(UserDict):
+    def __init__(self) -> None:
+        pass
+
+    def add_record(self, name, phone):
+        self.data.name = name
+        for v in phone:
+            self.data[name].append(v)
+        print("Contact save fine!")
+
+    def change_record(self, name, phone):
         try:
-            s_result = func(*args, **kwargs)
-            return s_result
-        except Exception as e:
-            if e.__class__ == UnboundLocalError:
-                if "name" in e.args[0]:
-                    print(ANSWER["4"])
-                elif "phone" in e.args[0]:
-                    print(ANSWER["5"])
-                else:
-                    print(ANSWER["6"])
-            elif e.__class__ == IndexError:
-                return ANSWER["7"]
-            elif e.__class__ == KeyError:
-                return ANSWER["7"]
-            elif e.__class__ == ValueError:
-                return ANSWER["8"]
-            else:
-                return ANSWER["6"]
-    return inner
+            for v in phone:
+                self.data[name].append(v)
+            print("Contact save fine!")
+        except:
+            print("There is no user with this name!")
+
+    def search_phone(self, name):
+        try:
+            print(self.data[name])
+        except:
+            print("There is no user with this name!")
+
+    def show_all(self):
+        print(self.data)
 
 
-@input_error
-def command_add(phone: str, name: str) -> str:
-    """Функція додання контакту до словника"""
-    CONTACTS[name] = phone
-    return ANSWER["2"]
+class User():
+    def __init__(self):
+        pass
+
+    def command_hello(self):
+        """Функція привітання"""
+        print("How can I help you?")
+
+    def command_exit(self):
+        """Функція виходу"""
+        sys.exit("Good bye!")
 
 
-@input_error
-def command_change(phone: str, name: str) -> str:
-    """Функція зміни номерів телефону в словнику"""
-    if CONTACTS[name]:
-        CONTACTS[name] = CONTACTS[name] + " ," + phone
-        return ANSWER["3"]
-    else:
-        return ANSWER["7"]
-
-
-@input_error
-def command_phone(name: str) -> str:
-    """Функція пошуку телефону по імені користувача"""
-    answer = CONTACTS[name]
-    return answer
-
-
-def command_show_all() -> str:
-    """Функція відображення списку контактів"""
-    list_a = []
-    for k in CONTACTS.keys():
-        list_a.append(k.title())
-        list_a.append(CONTACTS[k])
-        list_a.append("\n")
-    answer = " ".join(list_a)
-    return answer
-
-
-def command_exit():
-    """Функція виходу"""
-    sys.exit("Good bye!")
-
-
-PARSER_1 = {
-    "add": command_add,
-    "change": command_change,
-    "phone": command_phone
-}
-PARSER_2 = {
-    "hello": command_hello,
-    "show all": command_show_all,
-    "good bye": command_exit,
-    "close": command_exit,
-    "exit": command_exit
-}
-
-
-def command(input_command: str):
-    """Функція, що по введеній команді викликає відповідну handler-функцію"""
-    if PARSER_1.get(input_command, False):
-        return PARSER_1[input_command]
-    else:
-        return PARSER_2[input_command]()
-
-
-@input_error_main
-def main():
-    PARSER = PARSER_1.copy()
-    PARSER.update(PARSER_2)
-    while True:
-        s = input("Enter command:").lower()
-        if s == ".":
+address_book = AddressBook()
+user_1 = User()
+command_list = ["hello", "add", "change",
+                "phone", "show all", "close", "exit", "good bye"]
+while True:
+    command_string = input("Enter command:").lower()
+    if command_string == ".":
+        break
+    find_command = False
+    for k in command_list:
+        if k in command_string:
+            input_com = k
+            attribute_sring = command_string.removeprefix(k).strip()
+            find_command = True
             break
-        # --------Пошук команди у введеному рядку--------------------
-        itar_avel = False
-        for k in PARSER.keys():
-            if k in s:
-                input_com = k
-                pert_2_s = s.removeprefix(k).strip()
-                itar_avel = True
-                break
-        if not itar_avel:
-            print("Command undefined! Try again!")
-            continue
-        # ------------------Пошук імені у введеному рядку--------------
-        input_list = pert_2_s.split(" ")
-        for i in input_list:
-            if i.isalpha():
-                name = i
-                input_list.remove(name)
-                phone = " ".join(input_list)
-                break
-        # --------------Виклик відповідної команди----------------------
-        if (input_com == "add") or (input_com == "change"):
-            result = command(input_com)(phone, name)
-            del name, phone
-        elif input_com == "phone":
-            result = command(input_com)(name)
-            del name
-        else:
-            result = command(input_com)
-        print(result)
-
-
-main()
+    if not find_command:
+        print("Command undefined! Try again!")
+        continue
+    input_list = attribute_sring.split(" ")
+    for i in input_list:
+        if i.isalpha():
+            name = i
+            input_list.remove(name)
+            phone = " ".join(input_list)
+            break
+    if command_string == "hello":
+        user_1.command_hello()
+    elif (command_string == "close") or (command_string == "exit") or (command_string == "good bye"):
+        user_1.command_exit()
+    elif command_string == "add":
+        try:
+            address_book.add_record(name, phone)
+        except:
+            print("Give me name and phone please!")
+    elif command_string == "change":
+        try:
+            address_book.change_record(name, phone)
+        except:
+            print("Give me name and phone please!")
+    elif command_string == "phone":
+        try:
+            address_book.search_phone(name)
+        except:
+            print("Enter user name!")
+    elif command_string == "show all":
+        address_book.show_all()
