@@ -26,6 +26,18 @@ class Record():
         for p in phone:
             self.phone.append(Phone(p))
 
+    def add_phone(self, phone_new):
+        self.phone.append(phone_new)
+
+    def change_phone(self, phone_new):
+        self.phone.extend(phone_new)
+
+    def delete_phone(self, phone_new):
+        try:
+            self.phone.remove(phone_new)
+        except:
+            print("This phone not found!")
+
 
 class AddressBook(UserDict):
     def __init__(self) -> None:
@@ -35,15 +47,16 @@ class AddressBook(UserDict):
         Record.__setitem__(key, value)
 
     def add_record(self, name, phone):
-        self.data[name] = []
-        for v in phone:
-            self.data[name].append(v)
-        print("Contact save fine!")
+        try:
+            self.data[name] = []
+            self.data.change_phone(phone)
+            print("Contact save fine!")
+        except:
+            print("")
 
     def change_record(self, name, phone):
         try:
-            for v in phone:
-                self.data[name].append(v)
+            self.data.change_phone(phone)
             print("Contact save fine!")
         except:
             print("There is no user with this name!")
