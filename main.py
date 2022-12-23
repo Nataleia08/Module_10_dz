@@ -53,7 +53,7 @@ class AddressBook(UserDict):
 
     def show_all(self):
         for k in self.data.keys():
-            print(k, self.data.get(k))
+            print(k, ":", " ".join(self.data.get(k)))
 
 
 class User():
@@ -90,8 +90,8 @@ while True:
     input_list = attribute_sring.split(" ")
     for i in input_list:
         if i.isalpha():
-            name = Name(i)
-            input_list.remove(name.name)
+            name = Name(i.title())
+            input_list.remove(i)
             phone = Phone(input_list)
             break
     if input_com == "hello":
