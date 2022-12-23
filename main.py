@@ -29,10 +29,10 @@ class Record():
 
 class AddressBook(UserDict):
     def __init__(self) -> None:
-        pass
+        UserDict.__init__(self)
 
     def add_record(self, name, phone):
-        self.data.name = name
+        self.data[name] = []
         for v in phone:
             self.data[name].append(v)
         print("Contact save fine!")
@@ -47,12 +47,13 @@ class AddressBook(UserDict):
 
     def search_phone(self, name):
         try:
-            print(self.data[name])
+            print(self.data.get(name))
         except:
             print("There is no user with this name!")
 
     def show_all(self):
-        print(self.data)
+        for k in self.data.keys():
+            print(k, self.data.get(k))
 
 
 class User():
@@ -89,28 +90,30 @@ while True:
     input_list = attribute_sring.split(" ")
     for i in input_list:
         if i.isalpha():
-            name = i
-            input_list.remove(name)
-            phone = " ".join(input_list)
+            name = Name(i)
+            input_list.remove(name.name)
+            phone = Phone(input_list)
             break
-    if command_string == "hello":
+    if input_com == "hello":
         user_1.command_hello()
-    elif (command_string == "close") or (command_string == "exit") or (command_string == "good bye"):
+    elif (input_com == "close") or (input_com == "exit") or (input_com == "good bye"):
         user_1.command_exit()
-    elif command_string == "add":
+    elif input_com == "add":
         try:
-            address_book.add_record(name, phone)
+            address_book.add_record(name.name, phone.phone)
         except:
             print("Give me name and phone please!")
-    elif command_string == "change":
+    elif input_com == "change":
         try:
-            address_book.change_record(name, phone)
+            address_book.change_record(name.name, phone.phone)
         except:
             print("Give me name and phone please!")
-    elif command_string == "phone":
+    elif input_com == "phone":
         try:
-            address_book.search_phone(name)
+            address_book.search_phone(name.name)
         except:
             print("Enter user name!")
-    elif command_string == "show all":
+    elif input_com == "show all":
         address_book.show_all()
+    else:
+        print("Command undefined! Try again!")
