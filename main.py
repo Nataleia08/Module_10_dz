@@ -62,7 +62,7 @@ class AddressBook(UserDict):
     def change_record(self, name, phone):
         """Функція зміни запису"""
         try:
-            self.data[name].change_phone(phone)
+            self.data[name].phone.append(Phone(phone))
             print("Contact save fine!")
         except:
             print("There is no user with this name!")
@@ -118,19 +118,20 @@ while True:
     for k in command_list:
         if k in command_string:
             input_com = k
-            attribute_sring = command_string.strip().replace(input_com, "")
+            attribute_sring = command_string.replace(input_com, "").strip()
             find_command = True
             break
     if not find_command:
         print("Command undefined! Try again!")
         continue
     input_list = attribute_sring.split(" ")
-    # input_list.remove(input_com)
+    # if "" in input_com:
+    #     input_list.remove("")
     for i in input_list:
         if i.isalpha():
             name = Name(i)
             input_list.remove(i)
-            phone = Phone(input_list)
+            phone = Phone(" ".join(input_list))
             break
     # ----------------------------Виконання команди--------------------------------------
     if input_com == "hello":
