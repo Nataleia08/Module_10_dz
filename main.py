@@ -67,18 +67,25 @@ class AddressBook(UserDict):
 
     def search_phone(self, name):
         try:
-            print(" ".join(self.data.get(name).phone.phone))
+            result = []
+            for p in self.data.get(name).phone:
+                result.append(p.phone)
+            print(" ".join(result))
         except:
             print("There is no user with this name!")
 
     def show_all(self):
         try:
-            for k in self.data.keys():
-                print(k.title(), ":")
-                for i in self.data.get(name).phone:
-                    print(i.phone)
-        except:
-            print("Error!")
+            result = []
+            for key_name in self.data.keys():
+                result.append(key_name.title())
+                phone_l = self.data.get(key_name).phone
+                for i in phone_l:
+                    result.append(i.phone)
+                result.append("\n")
+            print(" ".join(result))
+        except Exception as e:
+            print("Error!", e.args)
 
 
 class User():
