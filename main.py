@@ -62,6 +62,7 @@ class AddressBook(UserDict):
     def change_record(self, name, phone):
         """Функція зміни запису"""
         try:
+            self.data[name].phone.clear()
             self.data[name].phone.append(Phone(phone))
             print("Contact save fine!")
         except:
