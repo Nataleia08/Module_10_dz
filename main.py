@@ -53,6 +53,9 @@ class AddressBook(UserDict):
 
     def add_record(self, name, phone):
         """Функція додання запису"""
+        if (name == "") or (phone == ""):
+            print("Give me name and phone please!")
+            return None
         try:
             self.data[name] = Record(name, phone)
             print("Contact save fine!")
@@ -61,6 +64,9 @@ class AddressBook(UserDict):
 
     def change_record(self, name, phone):
         """Функція зміни запису"""
+        if (name == "") or (phone == ""):
+            print("Give me name and phone please!")
+            return None
         try:
             self.data[name].phone.clear()
             self.data[name].phone.append(Phone(phone))
@@ -70,6 +76,9 @@ class AddressBook(UserDict):
 
     def search_phone(self, name):
         """Функція пошуку телефону за ім'ям"""
+        if (name == ""):
+            print("Give me name please!")
+            return None
         try:
             result = []
             for p in self.data.get(name).phone:
