@@ -32,14 +32,14 @@ class Record():
             self.phone.append(Phone(str(phone)))
 
     def add_phone(self, phone_new):
-        self.phone.append(phone_new)
+        self.phone.append(Phone(phone_new))
 
     def change_phone(self, phone_new):
-        self.phone.extend(phone_new)
+        self.phone.extend(Phone(phone_new))
 
     def delete_phone(self, phone_new):
         try:
-            self.phone.remove(phone_new)
+            self.phone.remove(Phone(phone_new))
         except:
             print("This phone not found!")
 
@@ -52,6 +52,7 @@ class AddressBook(UserDict):
         self.data[name] = Record(name, phone)
 
     def add_record(self, name, phone):
+        """Функція додання запису"""
         try:
             self.data[name] = Record(name, phone)
             print("Contact save fine!")
@@ -59,6 +60,7 @@ class AddressBook(UserDict):
             print("Error!")
 
     def change_record(self, name, phone):
+        """Функція зміни запису"""
         try:
             self.data[name].change_phone(phone)
             print("Contact save fine!")
@@ -66,6 +68,7 @@ class AddressBook(UserDict):
             print("There is no user with this name!")
 
     def search_phone(self, name):
+        """Функція пошуку телефону за ім'ям"""
         try:
             result = []
             for p in self.data.get(name).phone:
@@ -75,6 +78,7 @@ class AddressBook(UserDict):
             print("There is no user with this name!")
 
     def show_all(self):
+        """Функція відображення списку контактів"""
         try:
             result = []
             for key_name in self.data.keys():
@@ -106,6 +110,7 @@ user_1 = User()
 command_list = ["hello", "add", "change",
                 "phone", "show all", "close", "exit", "good bye"]
 while True:
+    # ----------------------------Розпізнавання введених даних-----------------------
     command_string = input("Enter command:").lower()
     if command_string == ".":
         break
@@ -113,19 +118,21 @@ while True:
     for k in command_list:
         if k in command_string:
             input_com = k
-            attribute_sring = command_string.removeprefix(k).strip()
+            attribute_sring = command_string.strip().replace(input_com, "")
             find_command = True
             break
     if not find_command:
         print("Command undefined! Try again!")
         continue
     input_list = attribute_sring.split(" ")
+    # input_list.remove(input_com)
     for i in input_list:
         if i.isalpha():
             name = Name(i)
             input_list.remove(i)
             phone = Phone(input_list)
             break
+    # ----------------------------Виконання команди--------------------------------------
     if input_com == "hello":
         user_1.command_hello()
     elif (input_com == "close") or (input_com == "exit") or (input_com == "good bye"):
