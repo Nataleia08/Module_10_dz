@@ -8,15 +8,15 @@ class Field():
 
 
 class Name(Field):
-    def __init__(self, name) -> None:
+    def __init__(self, value) -> None:
         Field.__init__(self)
-        self.name = name
+        self.value = value
 
 
 class Phone(Field):
-    def __init__(self, phone) -> None:
+    def __init__(self, value) -> None:
         Field.__init__(self)
-        self.phone = phone
+        self.value = value
 
 
 class Record():
@@ -48,28 +48,29 @@ class AddressBook(UserDict):
     def __init__(self) -> None:
         UserDict.__init__(self)
 
-    def __setitem__(self, name, phone) -> None:
-        self.data[name] = Record(name, phone)
+    def __setitem__(self, name: str, phone: list) -> None:
+        self.data[name] = Record(Name(name), Phone(phone))
 
-    def add_record(self, name, phone):
+    def add_record(self, record: Record):
         """Функція додання запису"""
-        if (name == "") or (phone == ""):
+        key = str(record.name.value.value)
+        if (key == "") or (len(record.phone) == 0):
             print("Give me name and phone please!")
             return None
         try:
-            self.data[name] = Record(name, phone)
+            self.data[key] = record
             print("Contact save fine!")
         except:
             print("Error!")
 
-    def change_record(self, name, phone):
+    def change_record(self, record: Record):
         """Функція зміни запису"""
-        if (name == "") or (phone == ""):
+        key = str(record.name.value.value)
+        if (key == "") or (len(record.phone) == 0):
             print("Give me name and phone please!")
             return None
         try:
-            self.data[name].phone.clear()
-            self.data[name].phone.append(Phone(phone))
+            self.data[key] = record
             print("Contact save fine!")
         except:
             print("There is no user with this name!")
@@ -81,8 +82,8 @@ class AddressBook(UserDict):
             return None
         try:
             result = []
-            for p in self.data.get(name).phone:
-                result.append(p.phone)
+            for p in self.data[name].phone:
+                result.append(str(p.value.value))
             print(" ".join(result))
         except:
             print("There is no user with this name!")
@@ -92,10 +93,11 @@ class AddressBook(UserDict):
         try:
             result = []
             for key_name in self.data.keys():
-                result.append(key_name.title())
-                phone_l = self.data.get(key_name).phone
+                k = key_name.title()
+                result.append(k)
+                phone_l = self.data[key_name].phone
                 for i in phone_l:
-                    result.append(i.phone)
+                    result.append(str(i.value.value))
                 result.append("\n")
             print(" ".join(result))
         except Exception as e:
@@ -141,7 +143,10 @@ while True:
         if i.isalpha():
             name = Name(i)
             input_list.remove(i)
-            phone = Phone(" ".join(input_list))
+            phone = []
+            for elem in input_list:
+                phone.append(Phone(elem))
+            new_record = Record(name, phone)
             break
     # ----------------------------Виконання команди--------------------------------------
     if input_com == "hello":
@@ -150,17 +155,17 @@ while True:
         user_1.command_exit()
     elif input_com == "add":
         try:
-            address_book.add_record(name.name, phone.phone)
+            address_book.add_record(new_record)
         except:
             print("Give me name and phone please!")
     elif input_com == "change":
         try:
-            address_book.change_record(name.name, phone.phone)
+            address_book.change_record(new_record)
         except:
             print("Give me name and phone please!")
     elif input_com == "phone":
         try:
-            address_book.search_phone(name.name)
+            address_book.search_phone(name.value)
         except:
             print("Enter user name!")
     elif input_com == "show all":
