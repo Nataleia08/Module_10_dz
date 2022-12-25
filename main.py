@@ -8,23 +8,30 @@ class Field():
 
 
 class Name(Field):
-    def __init__(self, value) -> None:
+    def __init__(self, value: str) -> None:
         Field.__init__(self)
         self.value = value
 
 
 class Phone(Field):
-    def __init__(self, value) -> None:
+    def __init__(self, value: str) -> None:
         Field.__init__(self)
         self.value = value
 
 
 class Record():
     def __init__(self, name, phone) -> None:
-        self.name = Name(name)
+        if type(name) == Name:
+            self.name = name
+        else:
+            self.name = Name(str(name))
         self.phone = []
-        if type(phone) == str:
-            self.phone.append(Phone(phone))
+        if type(phone) == Phone:
+            self.phone.append(phone)
+        elif type(phone) == str:
+            p_list = phone.strip().split(" ")
+            for p in p_list:
+                self.phone.append(Phone(p))
         elif type(phone) == list:
             for p in phone:
                 self.phone.append(Phone(p))
@@ -48,12 +55,12 @@ class AddressBook(UserDict):
     def __init__(self) -> None:
         UserDict.__init__(self)
 
-    def __setitem__(self, name: str, phone: list) -> None:
-        self.data[name] = Record(Name(name), Phone(phone))
+    def __setitem__(self, name: str, phone) -> None:
+        self.data[name] = Record(name, phone)
 
     def add_record(self, record: Record):
         """Функція додання запису"""
-        key = str(record.name.value.value)
+        key = str(record.name.value)
         if (key == "") or (len(record.phone) == 0):
             print("Give me name and phone please!")
             return None
@@ -65,7 +72,7 @@ class AddressBook(UserDict):
 
     def change_record(self, record: Record):
         """Функція зміни запису"""
-        key = str(record.name.value.value)
+        key = str(record.name.value)
         if (key == "") or (len(record.phone) == 0):
             print("Give me name and phone please!")
             return None
@@ -83,7 +90,7 @@ class AddressBook(UserDict):
         try:
             result = []
             for p in self.data[name].phone:
-                result.append(str(p.value.value))
+                result.append(str(p.value))
             print(" ".join(result))
         except:
             print("There is no user with this name!")
@@ -97,7 +104,7 @@ class AddressBook(UserDict):
                 result.append(k)
                 phone_l = self.data[key_name].phone
                 for i in phone_l:
-                    result.append(str(i.value.value))
+                    result.append(str(i.value))
                 result.append("\n")
             print(" ".join(result))
         except Exception as e:
@@ -141,11 +148,9 @@ while True:
     #     input_list.remove("")
     for i in input_list:
         if i.isalpha():
-            name = Name(i)
+            name = i
             input_list.remove(i)
-            phone = []
-            for elem in input_list:
-                phone.append(Phone(elem))
+            phone = " ".join(input_list)
             new_record = Record(name, phone)
             break
     # ----------------------------Виконання команди--------------------------------------
@@ -165,7 +170,7 @@ while True:
             print("Give me name and phone please!")
     elif input_com == "phone":
         try:
-            address_book.search_phone(name.value)
+            address_book.search_phone(name)
         except:
             print("Enter user name!")
     elif input_com == "show all":

@@ -8,8 +8,8 @@ if __name__ == '__main__':
 
     assert isinstance(ab['Bill'], Record)
     assert isinstance(ab['Bill'].name, Name)
-    assert isinstance(ab['Bill'].phones, list)
-    assert isinstance(ab['Bill'].phones[0], Phone)
-    assert ab['Bill'].phones[0].value == '1234567890'
+    assert isinstance(ab['Bill'].phone, list)
+    assert isinstance(ab['Bill'].phone[0], Phone)
+    assert ab['Bill'].phone[0].value == '1234567890'
 
     print('All Ok)')
